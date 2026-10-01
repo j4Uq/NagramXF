@@ -1,0 +1,121 @@
+name: Arm64 build
+
+# 独立工作流：只打 normal/arm64-v8a，产物进 artifact。
+# 与上游同步零冲突：本文件为 fork 独有；所有提速修改仅在 runner 工作区临时生效，不提交。
+
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - '.github/workflows/arm64.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  build:
+    name: Gradle Build (arm64 only)
+    runs-on: ubuntu-latest
+    env:
+      CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
+      CCACHE_HARDLINK: "true"
+      CCACHE_NOHASHDIR: "true"
+      CCACHE_MAXSIZE: "10G"
+      NATIVE_TARGET: arm64-v8a
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+          submodules: recursive
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+      - name: Set up Ccache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          append-timestamp: false
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-disabled: true
+      - name: Set up Gradle cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.gradle
+          key: gradle-${{ hashFiles('**/*.gradle') }}
+      - name: Set up Android SDK Tools
+        uses: android-actions/setup-android@v3
+        with:
+          # ndk must match ndkVersion in the root build.gradle
+          packages: "build-tools;36.0.0 ndk;27.2.12479018 platforms;android-36"
+      - name: Set up Python (Chaquopy bridge source build)
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11.9'
+      - name: Install Cython (Chaquopy bridge source build)
+        run: pip install Cython==3.0.11
+      - name: Configure Android SDK Path
+        run: |
+          echo "sdk.dir=${ANDROID_HOME}" >> local.properties
+      - name: Restore release keystore (ephemeral, not committed)
+        env:
+          RELEASE_KEYSTORE_B64: ${{ secrets.RELEASE_KEYSTORE_B64 }}
+          LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
+        run: |
+          set -e
+          if [ -z "$RELEASE_KEYSTORE_B64" ]; then
+            echo "RELEASE_KEYSTORE_B64 secret is missing" >&2
+            exit 1
+          fi
+          echo "$RELEASE_KEYSTORE_B64" | base64 -d > TMessagesProj/release.keystore
+          KS_PASS="$(echo "$LOCAL_PROPERTIES" | base64 -d | grep '^KEYSTORE_PASS=' | cut -d= -f2-)"
+          keytool -list -keystore TMessagesProj/release.keystore -storepass "$KS_PASS" 2>&1 | head -n 6
+      - name: Limit native build to arm64 (ephemeral, not committed)
+        run: |
+          python3 - <<'EOF'
+          p = 'TMessagesProj/build.gradle'
+          lines = open(p).read().split('\n')
+          idx = [i for i, l in enumerate(lines) if 'ndk.abiFilters.addAll(normalAbis)' in l]
+          assert len(idx) == 1, "anchor count=%d, refusing to patch" % len(idx)
+          i = idx[0]
+          j = i
+          while j >= 0 and 'if (nativeTarget.isBlank())' not in lines[j]:
+              j -= 1
+          assert j >= 0, "enclosing if not found"
+          assert lines[i + 1].strip() == '}', repr(lines[i + 1])
+          indent_if = lines[j][:len(lines[j]) - len(lines[j].lstrip())]
+          indent_inner = lines[i][:len(lines[i]) - len(lines[i].lstrip())]
+          lines[i + 1] = indent_if + "} else {\n" + indent_inner + "ndk.abiFilters.add(nativeTarget)\n" + indent_if + "}"
+          open(p, 'w').write('\n'.join(lines))
+          print("patched: normal flavor builds NATIVE_TARGET ABI only")
+          EOF
+          git status --short
+          git diff --stat
+      - name: Modify Gradle JVM Args
+        run: |
+          MEMORY_KB=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
+          MEMORY_GB=$((MEMORY_KB / 1024 / 1024))
+          echo "Detected memory size: ${MEMORY_GB}GB"
+          if [ $MEMORY_GB -ge 12 ]; then
+            sed -i '/^org\.gradle\.jvmargs=/d' gradle.properties
+            echo "org.gradle.jvmargs=-Xmx8G -XX:MaxMetaspaceSize=2G -XX:+UseParallelGC -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8" >> gradle.properties
+          fi
+          cat gradle.properties
+      - name: Arm64 Build (normal staging)
+        env:
+          COMMIT_ID: ${{ github.sha }}
+        run: |
+          export LOCAL_PROPERTIES="${{ secrets.LOCAL_PROPERTIES }}"
+          export BUILD_TIMESTAMP=$(date +%s)
+          ./gradlew TMessagesProj:assembleNormalStaging
+      - uses: actions/upload-artifact@v4
+        with:
+          name: normal-arm64-dev
+          path: TMessagesProj/build/outputs/apk/normal/staging/
+          if-no-files-found: error
