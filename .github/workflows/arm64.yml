@@ -76,27 +76,15 @@ jobs:
           echo "$RELEASE_KEYSTORE_B64" | base64 -d > TMessagesProj/release.keystore
           KS_PASS="$(echo "$LOCAL_PROPERTIES" | base64 -d | grep '^KEYSTORE_PASS=' | cut -d= -f2-)"
           keytool -list -keystore TMessagesProj/release.keystore -storepass "$KS_PASS" 2>&1 | head -n 6
-      - name: Limit native build to arm64 (ephemeral, not committed)
+      - name: Confirm arm64-only splits (no repo edit)
+        # AGP forbids ndk.abiFilters overlapping splits abi filters when
+        # universalApk=false, so we intentionally do NOT touch abiFilters.
+        # NATIVE_TARGET=arm64-v8a alone makes splits emit only the arm64 APK.
         run: |
-          python3 - <<'EOF'
-          p = 'TMessagesProj/build.gradle'
-          lines = open(p).read().split('\n')
-          idx = [i for i, l in enumerate(lines) if 'ndk.abiFilters.addAll(normalAbis)' in l]
-          assert len(idx) == 1, "anchor count=%d, refusing to patch" % len(idx)
-          i = idx[0]
-          j = i
-          while j >= 0 and 'if (nativeTarget.isBlank())' not in lines[j]:
-              j -= 1
-          assert j >= 0, "enclosing if not found"
-          assert lines[i + 1].strip() == '}', repr(lines[i + 1])
-          indent_if = lines[j][:len(lines[j]) - len(lines[j].lstrip())]
-          indent_inner = lines[i][:len(lines[i]) - len(lines[i].lstrip())]
-          lines[i + 1] = indent_if + "} else {\n" + indent_inner + "ndk.abiFilters.add(nativeTarget)\n" + indent_if + "}"
-          open(p, 'w').write('\n'.join(lines))
-          print("patched: normal flavor builds NATIVE_TARGET ABI only")
-          EOF
+          grep -n "nativeTarget.isBlank() ? normalAbis : \[nativeTarget\]" TMessagesProj/build.gradle
+          grep -n "universalApk = nativeTarget.isBlank()" TMessagesProj/build.gradle
+          echo "splits arm64-only confirmed; build.gradle untouched:"
           git status --short
-          git diff --stat
       - name: Modify Gradle JVM Args
         run: |
           MEMORY_KB=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
