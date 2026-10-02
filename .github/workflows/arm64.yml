@@ -4,11 +4,6 @@ name: Arm64 build
 # 与上游同步零冲突：本文件为 fork 独有；所有提速修改仅在 runner 工作区临时生效，不提交。
 
 on:
-  push:
-    branches:
-      - dev
-    paths:
-      - '.github/workflows/arm64.yml'
   workflow_dispatch:
 
 permissions:
