@@ -3,6 +3,10 @@
 -keepclassmembernames class * {
     @com.google.android.gms.common.annotation.KeepName *;
 }
+
+-keep @interface androidx.annotation.Keep
+-keep @androidx.annotation.Keep class * { *; }
+-keepclasseswithmembers class * { @androidx.annotation.Keep *; }
 -keep class com.exteragram.messenger.ExteraConfig { *; }
 -keep class com.exteragram.messenger.utils.** { *; }
 -keep class org.telegram.tgnet.** { *; }
@@ -44,8 +48,13 @@
     @android.webkit.JavascriptInterface <methods>;
 }
 
+-keep class org.telegram.utils.code.highlight.PrismaHighlighter {
+    private static native <methods>;
+}
+
 # https://developers.google.com/ml-kit/known-issues#android_issues
 -keep class com.google.mlkit.nl.languageid.internal.ThickLanguageIdentifier { *; }
+-keep class com.google.mlkit.nl.languageid.internal.LanguageIdentificationJni { *; }
 
 # Constant folding for resource integers may mean that a resource passed to this method appears to be unused. Keep the method to prevent this from happening.
 -keep class com.google.android.exoplayer2.upstream.RawResourceDataSource {
@@ -247,3 +256,10 @@
 -keepattributes *Annotation*
 -dontoptimize
 -dontobfuscate
+-dontwarn org.checkerframework.**
+-dontwarn javax.annotation.**
+-keep class io.nano.tex.** {*;}
+-keep class org.scilab.forge.jlatexmath.** { *; }
+-keep class ru.noties.jlatexmath.** { *; }
+-dontwarn org.scilab.forge.jlatexmath.**
+-keep class org.telegram.tgnet.** { *; }

@@ -354,6 +354,8 @@
     <string name="ChatHistory_EnterSearchQuery">输入搜索内容</string>
     <string name="ChatHistory_LinkSharedToChat_one">链接已转发到 **1 个聊天**。</string>
     <string name="ChatHistory_LinkSharedToChat_other">链接已转发到 **%1$d 个聊天**。</string>
+    <string name="ChatHistory_ChatsRemoved_one">已移除 %1$d 个聊天</string>
+    <string name="ChatHistory_ChatsRemoved_other">已移除 %1$d 个聊天</string>
     <string name="StorageSettings">存储</string>
     <string name="PasscodeShowMessagePreviewWhenLocked">显示消息预览</string>
     <string name="PasscodeShowMessagePreviewWhenLockedAbout">在密码锁启用时不再隐藏通知内容。</string>
@@ -453,6 +455,9 @@
     <string name="PluginDependencyNoCompatibleWheel">未找到适用于 %1$s 的纯 Python wheel。</string>
     <string name="PluginDependencyNativeUnsupported">依赖 %1$s 在当前版本范围内仅提供原生 wheel。当前客户端暂时只支持纯 Python wheel。</string>
     <string name="PluginDependencySourceUnsupported">依赖 %1$s 在当前版本范围内仅提供源码分发包。当前客户端暂时只支持纯 Python wheel。</string>
+    <string name="PluginDependencyPythonUnsupported">依赖 %1$s 需要 Python %2$s，而当前客户端运行 Python 3.11。</string>
+    <string name="PluginsSettingsTranslate">翻译设置</string>
+    <string name="PluginsSettingsShowOriginal">显示原文</string>
     <string name="PluginsSafeMode">插件安全模式</string>
     <string name="PluginsSafeModeInfo">插件在崩溃后已被禁用。你可以退出安全模式并重启插件引擎。</string>
     <string name="PluginsSafeModeInfoManual">插件安全模式已手动开启。关闭安全模式后才能再次加载插件。</string>

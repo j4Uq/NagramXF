@@ -375,6 +375,10 @@
     <string name="ChatHistory_EnterSearchQuery">Enter search query</string>
     <string name="ChatHistory_LinkSharedToChat_one">Link forwarded to **a chat**.</string>
     <string name="ChatHistory_LinkSharedToChat_other">Link forwarded to **%1$d chats**.</string>
+    <string name="ChatHistory_ChatsRemoved_one">%1$d chat removed</string>
+    <string name="ChatHistory_ChatsRemoved_few">%1$d chats removed</string>
+    <string name="ChatHistory_ChatsRemoved_many">%1$d chats removed</string>
+    <string name="ChatHistory_ChatsRemoved_other">%1$d chats removed</string>
     <string name="StorageSettings">Storage</string>
     <string name="PasscodeShowMessagePreviewWhenLocked">Show Message Previews</string>
     <string name="PasscodeShowMessagePreviewWhenLockedAbout">Shows notification content even when passcode lock is active.</string>
@@ -483,6 +487,9 @@
     <string name="PluginDependencyNoCompatibleWheel">No compatible pure-Python wheel was found for %1$s.</string>
     <string name="PluginDependencyNativeUnsupported">Dependency %1$s only provides native wheels in the selected version range. This client currently supports pure-Python wheels only.</string>
     <string name="PluginDependencySourceUnsupported">Dependency %1$s only provides source distributions in the selected version range. This client currently supports pure-Python wheels only.</string>
+    <string name="PluginDependencyPythonUnsupported">Dependency %1$s requires Python %2$s, but this client runs Python 3.11.</string>
+    <string name="PluginsSettingsTranslate">Translate settings</string>
+    <string name="PluginsSettingsShowOriginal">Show original text</string>
     <string name="PluginsSafeMode">Plugins safe mode</string>
     <string name="PluginsSafeModeInfo">Plugins were disabled after a crash. You can leave safe mode and restart the engine.</string>
     <string name="PluginsSafeModeInfoManual">Plugins safe mode is enabled manually. Disable safe mode to load plugins again.</string>

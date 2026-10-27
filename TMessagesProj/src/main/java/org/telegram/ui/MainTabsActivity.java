@@ -92,6 +92,7 @@ import org.telegram.ui.Components.blur3.source.BlurredBackgroundSourceRenderNode
 import org.telegram.ui.Components.chat.ViewPositionWatcher;
 import org.telegram.ui.Components.glass.GlassTabView;
 import org.telegram.ui.Stories.recorder.HintView2;
+import org.telegram.ui.Wallet.WalletActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -1161,8 +1162,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
     }
 
     private NotificationCenter.ObserversGroup observersGroup;
-    private NotificationCenter.ObserversGroup globalObserversGroup;
-
     @Override
     public boolean onFragmentCreate() {
         configuredTabs = MainTabsConfigManager.getEnabledTabs();
@@ -1178,13 +1177,11 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
             .add(NotificationCenter.contactsPermissionBadgeCheck)
             .add(NotificationCenter.didReceiveNewMessages)
             .add(NotificationCenter.feedNeedReload)
-            .add(NotificationCenter.feedTabVisibleToggled);
-
-        globalObserversGroup = NotificationCenter.getGlobalInstance().createObserversGroup(this)
-            .add(NotificationCenter.appUpdateAvailable)
-            .add(NotificationCenter.appUpdateLoading)
-            .add(NotificationCenter.needSetDayNightTheme)
-            .add(NotificationCenter.mainTabsLayoutChanged);
+            .add(NotificationCenter.feedTabVisibleToggled)
+            .addGlobal(NotificationCenter.appUpdateAvailable)
+            .addGlobal(NotificationCenter.appUpdateLoading)
+            .addGlobal(NotificationCenter.needSetDayNightTheme)
+            .addGlobal(NotificationCenter.mainTabsLayoutChanged);
 
         return super.onFragmentCreate();
     }
@@ -1198,10 +1195,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
             observersGroup.removeAllObservers();
             observersGroup = null;
         }
-        if (globalObserversGroup != null) {
-            globalObserversGroup.removeAllObservers();
-            globalObserversGroup = null;
-        }
+
         super.onFragmentDestroy();
     }
 
