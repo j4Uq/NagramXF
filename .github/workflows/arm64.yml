@@ -22,7 +22,7 @@ jobs:
       NATIVE_TARGET: arm64-v8a
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: dev
           submodules: recursive
@@ -36,16 +36,16 @@ jobs:
         with:
           append-timestamp: false
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
         with:
           cache-disabled: true
       - name: Set up Gradle cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.gradle
           key: gradle-${{ hashFiles('**/*.gradle') }}
       - name: Set up Android SDK Tools
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
         with:
           # ndk must match ndkVersion in the root build.gradle
           packages: "build-tools;36.0.0 ndk;27.2.12479018 platforms;android-36"
