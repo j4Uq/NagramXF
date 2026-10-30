@@ -45,7 +45,7 @@ jobs:
           path: ~/.gradle
           key: gradle-${{ hashFiles('**/*.gradle') }}
       - name: Set up Android SDK Tools
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
         with:
           # ndk must match ndkVersion in the root build.gradle
           packages: "build-tools;36.0.0 ndk;27.2.12479018 platforms;android-36"
