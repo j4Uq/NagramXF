@@ -57,7 +57,7 @@ jobs:
           # ndk must match ndkVersion in the root build.gradle
           packages: "build-tools;36.0.0 ndk;27.2.12479018 platforms;android-36"
       - name: Set up Python (Chaquopy bridge source build)
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.11.9'
       - name: Install Cython (Chaquopy bridge source build)
@@ -107,7 +107,7 @@ jobs:
 #        with:
 #          path: artifacts
 #      - name: Set up Python
-#        uses: actions/setup-python@v5
+#        uses: actions/setup-python@v7
 #        with:
 #          python-version: 3.12
 #      - name: Prepare commit summary
