@@ -82,12 +82,12 @@ jobs:
           export LOCAL_PROPERTIES="${{ secrets.LOCAL_PROPERTIES }}"
           export BUILD_TIMESTAMP=$(date +%s)
           ./gradlew TMessagesProj:assembleStaging
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: normal-staging
           path: TMessagesProj/build/outputs/apk/normal/staging/
           if-no-files-found: error
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: plugin-staging
           path: TMessagesProj/build/outputs/apk/plugin/staging/
