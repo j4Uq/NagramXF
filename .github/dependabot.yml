@@ -9,3 +9,6 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    exclude-paths:
+      - ".github/workflows/canary.yml"
+      - ".github/workflows/staging.yml"

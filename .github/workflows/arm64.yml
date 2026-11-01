@@ -27,7 +27,7 @@ jobs:
           ref: dev
           submodules: recursive
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           distribution: 'temurin'
           java-version: '21'
@@ -50,7 +50,7 @@ jobs:
           # ndk must match ndkVersion in the root build.gradle
           packages: "build-tools;36.0.0 ndk;27.2.12479018 platforms;android-36"
       - name: Set up Python (Chaquopy bridge source build)
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.11'
       - name: Install Cython (Chaquopy bridge source build)
@@ -97,7 +97,7 @@ jobs:
           export LOCAL_PROPERTIES="${{ secrets.LOCAL_PROPERTIES }}"
           export BUILD_TIMESTAMP=$(date +%s)
           ./gradlew TMessagesProj:assembleNormalStaging
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: normal-arm64-dev
           path: TMessagesProj/build/outputs/apk/normal/staging/
