@@ -36,7 +36,7 @@ jobs:
         with:
           append-timestamp: false
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
         with:
           cache-disabled: true
       - name: Set up Gradle cache
